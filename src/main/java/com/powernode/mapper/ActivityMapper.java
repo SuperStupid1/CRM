@@ -41,6 +41,14 @@ public interface ActivityMapper {
      * @return
      */
     int update(Activity activity);
+
+    /**
+     * 多条件查询
+     * @param activity
+     * @return
+     */
+    List<Activity> selectConditions(Activity activity);
+
 }
 
 

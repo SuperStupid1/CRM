@@ -23,10 +23,11 @@ public class ActivityController {
 
     /**
      * 查询所有市场活动
+     *
      * @return
      */
     @GetMapping
-    private ResponseObject findAll(){
+    private ResponseObject findAll() {
         ResponseObject ro = new ResponseObject();
         ro.setStateCode(200);
         List<Activity> activities = activityService.findAll();
@@ -36,14 +37,15 @@ public class ActivityController {
 
     /**
      * 添加市场活动
+     *
      * @param activity
      * @param session
      * @return
      */
     @PostMapping
-    private ResponseObject addActivity(Activity activity, HttpSession session){
+    private ResponseObject addActivity(Activity activity, HttpSession session) {
         // 给activity 的id create_by create_time 赋值
-        activity.setId(UUID.randomUUID().toString().replace("-",""));
+        activity.setId(UUID.randomUUID().toString().replace("-", ""));
         User user = (User) session.getAttribute(Constant.LOGIN_USER);
         activity.setCreateBy(user.getId());
         activity.setCreateTime(DateUtil.date2String(new Date()));
@@ -55,11 +57,12 @@ public class ActivityController {
 
     /**
      * 删除指定市场活动
+     *
      * @param ids
      * @return
      */
     @DeleteMapping("/{ids}")
-    private ResponseObject delActivity(@PathVariable("ids") String ids){
+    private ResponseObject delActivity(@PathVariable("ids") String ids) {
         activityService.delActivity(ids);
         ResponseObject ro = new ResponseObject();
         ro.setStateCode(200);
@@ -68,11 +71,12 @@ public class ActivityController {
 
     /**
      * 根据id查询市场活动
+     *
      * @param id
      * @return
      */
     @GetMapping("/{id}")
-    private ResponseObject findActivity(@PathVariable("id") String id){
+    private ResponseObject findActivity(@PathVariable("id") String id) {
         ResponseObject ro = new ResponseObject();
         Activity activity = activityService.findActivity(id);
         ro.setData(activity);
@@ -82,12 +86,13 @@ public class ActivityController {
 
     /**
      * 修改指定市场活动信息
+     *
      * @param activity
      * @param session
      * @return
      */
     @PostMapping("update")
-    private ResponseObject update(Activity activity,HttpSession session){
+    private ResponseObject update(Activity activity, HttpSession session) {
         ResponseObject ro = new ResponseObject();
         // 设置修改人 和 修改时间
         User user = (User) session.getAttribute(Constant.LOGIN_USER);
@@ -96,6 +101,20 @@ public class ActivityController {
         activityService.update(activity);
 
         ro.setStateCode(200);
+        return ro;
+    }
+
+    /**
+     * 多条件查询
+     * @param activity
+     * @return
+     */
+    @GetMapping("/conditionsFind")
+    private ResponseObject conditionsFind(Activity activity) {
+        ResponseObject ro = new ResponseObject();
+        List<Activity> activityList = activityService.conditionsFind(activity);
+        ro.setStateCode(200);
+        ro.setData(activityList);
         return ro;
     }
 }

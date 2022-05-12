@@ -58,4 +58,23 @@
     cost = #{cost},description = #{description},edit_time = #{editTime},edit_by = #{editBy}
     where id = #{id}
     </update>
+
+    <!-- 多条件查询   -->
+    <select id="selectConditions" resultMap="BaseResultMap">
+    select a.* from tbl_activity a inner join tbl_user u on a.owner = u.id
+    <where>
+    <if test="name != null and name != ''">
+     and a.name like concat("%",#{name},"%")
+    </if>
+    <if test="owner != null  and owner!= ''">
+    and  u.name like concat("%",#{owner},"%")
+    </if>
+    <if test="startDate != null and startDate != ''">
+    and a.start_date &gt;= #{startDate}
+    </if>
+    <if test="endDate != null and endDate != ''">
+    and a.end_date &lt;= #{endDate}
+    </if>
+    </where>
+    </select>
 </mapper>

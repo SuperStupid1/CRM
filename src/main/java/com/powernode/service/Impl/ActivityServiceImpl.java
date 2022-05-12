@@ -59,4 +59,14 @@ public class ActivityServiceImpl implements ActivityService {
             throw new CRMException("修改失败");
         }
     }
+
+    /**
+     * 多条件查询
+     * @param activity
+     * @return
+     */
+    @Override
+    public List<Activity> conditionsFind(Activity activity) {
+        return activityMapper.selectConditions(activity);
+    }
 }

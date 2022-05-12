@@ -36,4 +36,9 @@ public interface ActivityService {
      * @param activity
      */
     void update(Activity activity);
+
+    /**
+     * 多条件查询市场活动
+     */
+    List<Activity> conditionsFind(Activity activity);
 }
