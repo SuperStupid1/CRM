@@ -1,5 +1,8 @@
 package com.powernode.service.Impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.powernode.exception.CRMException;
 import com.powernode.mapper.ActivityMapper;
 import com.powernode.pojo.Activity;
@@ -21,8 +24,11 @@ public class ActivityServiceImpl implements ActivityService {
      * @return
      */
     @Override
-    public List<Activity> findAll() {
-        return activityMapper.selectAll();
+    public PageInfo<Activity> findAll(Integer pageNum,Integer pageSize) {
+        // 分页查询
+        Page<Activity> page = PageHelper.startPage(pageNum, pageSize);
+        List<Activity> activityList = activityMapper.selectAll();
+        return page.toPageInfo();
     }
 
     /**
@@ -66,7 +72,10 @@ public class ActivityServiceImpl implements ActivityService {
      * @return
      */
     @Override
-    public List<Activity> conditionsFind(Activity activity) {
-        return activityMapper.selectConditions(activity);
+    public PageInfo<Activity> conditionsFind(Activity activity,Integer pageNum,Integer pageSize) {
+        // 分页查询
+        Page<Activity> page = PageHelper.startPage(pageNum, pageSize);
+        List<Activity> activityList = activityMapper.selectConditions(activity);
+        return page.toPageInfo();
     }
 }

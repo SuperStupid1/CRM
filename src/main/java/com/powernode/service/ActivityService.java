@@ -1,5 +1,6 @@
 package com.powernode.service;
 
+import com.github.pagehelper.PageInfo;
 import com.powernode.pojo.Activity;
 
 import java.util.List;
@@ -10,7 +11,7 @@ public interface ActivityService {
      * 查询所有市场活动
      * @return
      */
-    List<Activity> findAll();
+    PageInfo<Activity> findAll(Integer pageNum,Integer pageSize);
 
     /**
      * 添加市场活动
@@ -40,5 +41,5 @@ public interface ActivityService {
     /**
      * 多条件查询市场活动
      */
-    List<Activity> conditionsFind(Activity activity);
+    PageInfo<Activity> conditionsFind(Activity activity,Integer pageNum,Integer pageSize);
 }

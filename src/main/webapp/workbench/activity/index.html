@@ -12,48 +12,123 @@
 <script type="text/javascript" src="../../jquery/bootstrap-datetimepicker-master/locale/bootstrap-datetimepicker.zh-CN.js"></script>
 
 <script type="text/javascript">
-	$(function(){
+	var pageInfo;
+	var pageNum = 1;
+	var pageSize = 3;
 
-		// 解析activityList成html页面
-		function analysisActivityList2Html (activityList){
-			let htmlStr = "";
-			for (let i = 0; i < activityList.length; i++) {
-				htmlStr += "<tr class=\"active\">\n" +
-						"\t\t\t\t\t\t\t<td><input onclick='check()' class='check' value='"+activityList[i].id+"' type=\"checkbox\" /></td>\n" +
-						"\t\t\t\t\t\t\t<td><a style=\"text-decoration: none; cursor: pointer;\" onclick=\"window.location.href='detail.html';\">"+activityList[i].name+"</a></td>\n" +
-						"                            <td>"+activityList[i].ownerUser.name+"</td>\n" +
-						"\t\t\t\t\t\t\t<td>"+activityList[i].startDate+"</td>\n" +
-						"\t\t\t\t\t\t\t<td>"+activityList[i].endDate+"</td>\n" +
-						"\t\t\t\t\t\t</tr>";
-			}
-			$("#tbody").html(htmlStr);
-		};
-		// 查询所有市场活动
+	// 解析查询多条市场活动结果成html页面
+	function analysisActivityList2Html (activityList){
+		let htmlStr = "";
+		for (let i = 0; i < activityList.length; i++) {
+			htmlStr += "<tr class=\"active\">\n" +
+					"\t\t\t\t\t\t\t<td><input onclick='check()' class='check' value='"+activityList[i].id+"' type=\"checkbox\" /></td>\n" +
+					"\t\t\t\t\t\t\t<td><a style=\"text-decoration: none; cursor: pointer;\" onclick=\"window.location.href='detail.html?id="+activityList[i].id+"';\">"+activityList[i].name+"</a></td>\n" +
+					"                            <td>"+activityList[i].ownerUser.name+"</td>\n" +
+					"\t\t\t\t\t\t\t<td>"+activityList[i].startDate+"</td>\n" +
+					"\t\t\t\t\t\t\t<td>"+activityList[i].endDate+"</td>\n" +
+					"\t\t\t\t\t\t</tr>";
+			//
+		}
+		$("#tbody").html(htmlStr);
+	}
+
+	function firstPage(){
+		pageNum = 1;
+		pageSize = pageInfo.pageSize;
+		checkPage();
+		toPage();
+	}
+	function prePage(){
+		pageNum = pageInfo.prePage;
+		pageSize = pageInfo.pageSize;
+		checkPage();
+		toPage();
+	}
+	function lastPage(){
+		pageNum = pageInfo.pages;
+		pageSize = pageInfo.pageSize;
+		checkPage();
+		toPage();
+	}
+	function nextPage(){
+		pageNum = pageInfo.nextPage;
+		pageSize = pageInfo.pageSize;
+		checkPage();
+		toPage();
+	}
+
+	// 页码判断函数
+	function checkPage(){
+		if (pageNum == 1){
+			$("#firstPage").prop("class","disabled")
+			$("#firstPage").css
+			$("#prePage").prop("class","disabled")
+		}else if (pageNum == pageInfo.pages){
+			$("#lastPage").prop("class","disabled")
+			$("#nextPage").prop("class","disabled")
+		}else {
+			$("#firstPage").prop("class","")
+			$("#prePage").prop("class","")
+			$("#lastPage").prop("class","")
+			$("#nextPage").prop("class","")
+		}
+	}
+
+	function changePage(num) {
+		pageNum = num;
+		$("#li+"+num).prop("class","active");
+		toPage();
+		analysisActivityList2Html();
+	}
+
+
+	function toPage(){
+		// 分页查询所有市场活动
 		$.ajax({
-			url:"/CRM/activity",
+			url:"/CRM/activity/conditionsFind/"+pageNum+"/"+pageSize,
 			type:"get",
+			data:$("#conditionsForm").serialize(),
 			dataType:"json",
 			success(ro){
 				if (ro.stateCode == 200){
-					let activityList =  ro.data;
-					analysisActivityList2Html(activityList);
+					pageInfo = ro.data;
+					$("#totalRecords").text(pageInfo.total);
+					analysisActivityList2Html(pageInfo.list);
+					loadPageNum();
 				}
 			}
 		});
+	}
+	// 加载页码函数
+	function loadPageNum(){
+		let pageStr = "";
+		for (let i = 1; i <= pageInfo.pages; i++) {
+			pageStr += "\t\t\t\t\t\t\t<li id='li"+i+"'><a href='javascript:changePage("+i+")'>"+i+"</a></li>\n";
+		}
+		$("#page").html("<li id=\"firstPage\"><a href=\"javascript:firstPage()\">首页</a></li>\n" +
+				"\t\t\t\t\t\t\t<li id=\"prePage\"><a href=\"javascript:prePage()\">上一页</a></li>\n" +
+				pageStr +
+				"\t\t\t\t\t\t\t<li id=\"nextPage\" ><a href=\"javascript:nextPage()\">下一页</a></li>\n" +
+				"\t\t\t\t\t\t\t<li id=\"lastPage\"><a href=\"javascript:lastPage()\">末页</a></li>")
+	}
+
+	// 变更pageSize函数
+	function changePageSize(size){
+		pageSize = size;
+		$("#pageSizeBtn").html(""+size+"\n" +
+				"\t\t\t\t\t\t\t<span class=\"caret\"></span>");
+		toPage();
+	}
+
+	$(function(){
+
+		checkPage();
+		toPage();
 
 		// 多条件查询
 		$("#conditionsFindBtn").click(function () {
-			$.ajax({
-				url:"/CRM/activity/conditionsFind",
-				type:"get",
-				data:$("#conditionsForm").serialize(),
-				dataType:"json",
-				success(ro){
-					if (ro.stateCode == 200){
-						analysisActivityList2Html(ro.data);
-					}
-				}
-			});
+			pageNum = 1;
+			toPage();
 		})
 
 		// 添加功能，所有者用户名回显
@@ -469,34 +544,35 @@
 			
 			<div style="height: 50px; position: relative;top: 30px;">
 				<div>
-					<button type="button" class="btn btn-default" style="cursor: default;">共<b>50</b>条记录</button>
+					<button type="button" class="btn btn-default" style="cursor: default;">共<b id="totalRecords">50</b>条记录</button>
 				</div>
 				<div class="btn-group" style="position: relative;top: -34px; left: 110px;">
 					<button type="button" class="btn btn-default" style="cursor: default;">显示</button>
 					<div class="btn-group">
-						<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-							10
+						<button type="button" id="pageSizeBtn" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+							3
 							<span class="caret"></span>
 						</button>
 						<ul class="dropdown-menu" role="menu">
-							<li><a href="#">20</a></li>
-							<li><a href="#">30</a></li>
+							<li><a href="javascript:changePageSize(3)" >3</a></li>
+							<li><a href="javascript:changePageSize(5)" >5</a></li>
+							<li><a href="javascript:changePageSize(10)">10</a></li>
 						</ul>
 					</div>
 					<button type="button" class="btn btn-default" style="cursor: default;">条/页</button>
 				</div>
 				<div style="position: relative;top: -88px; left: 285px;">
 					<nav>
-						<ul class="pagination">
-							<li class="disabled"><a href="#">首页</a></li>
-							<li class="disabled"><a href="#">上一页</a></li>
-							<li class="active"><a href="#">1</a></li>
+						<ul id="page" class="pagination">
+							<!--<li id="firstPage"><a href="javascript:firstPage()">首页</a></li>
+							<li id="prePage"><a href="javascript:prePage()">上一页</a></li>
+							<li class="active"><a href="">1</a></li>
 							<li><a href="#">2</a></li>
 							<li><a href="#">3</a></li>
 							<li><a href="#">4</a></li>
 							<li><a href="#">5</a></li>
-							<li><a href="#">下一页</a></li>
-							<li class="disabled"><a href="#">末页</a></li>
+							<li id="nextPage" ><a href="javascript:nextPage()">下一页</a></li>
+							<li id="lastPage"><a href="javascript:lastPage()">末页</a></li>-->
 						</ul>
 					</nav>
 				</div>

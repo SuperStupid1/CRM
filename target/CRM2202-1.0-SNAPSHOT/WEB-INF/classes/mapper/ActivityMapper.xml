@@ -3,78 +3,107 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.powernode.mapper.ActivityMapper">
-
     <resultMap id="BaseResultMap" type="com.powernode.pojo.Activity">
-            <id property="id" column="id" jdbcType="CHAR"/>
-            <result property="owner" column="owner" jdbcType="CHAR"/>
-            <result property="name" column="name" jdbcType="VARCHAR"/>
-            <result property="startDate" column="start_date" jdbcType="CHAR"/>
-            <result property="endDate" column="end_date" jdbcType="CHAR"/>
-            <result property="cost" column="cost" jdbcType="VARCHAR"/>
-            <result property="description" column="description" jdbcType="VARCHAR"/>
-            <result property="createTime" column="create_time" jdbcType="CHAR"/>
-            <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
-            <result property="editTime" column="edit_time" jdbcType="CHAR"/>
-            <result property="editBy" column="edit_by" jdbcType="VARCHAR"/>
-            <!--   连接查询对应的所有者用户信息     -->
-            <association property="ownerUser" javaType="user"
-                         select="com.powernode.mapper.UserMapper.selectById" column="owner"/>
+        <id property="id" column="id" jdbcType="CHAR"/>
+        <result property="owner" column="owner" jdbcType="CHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="startDate" column="start_date" jdbcType="CHAR"/>
+        <result property="endDate" column="end_date" jdbcType="CHAR"/>
+        <result property="cost" column="cost" jdbcType="VARCHAR"/>
+        <result property="description" column="description" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="CHAR"/>
+        <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
+        <result property="editTime" column="edit_time" jdbcType="CHAR"/>
+        <result property="editBy" column="edit_by" jdbcType="VARCHAR"/>
+        <!--   连接查询对应的所有者用户信息     -->
+        <association property="ownerUser" javaType="user"
+                     select="com.powernode.mapper.UserMapper.selectById" column="owner"/>
+        <!--   连接查询对应的创建者用户信息     -->
+        <association property="createUser" javaType="user"
+                     select="com.powernode.mapper.UserMapper.selectById" column="create_by"/>
+        <!--   连接查询对应的修改者用户信息     -->
+        <association property="editUser" javaType="user"
+                     select="com.powernode.mapper.UserMapper.selectById" column="edit_by"/>
     </resultMap>
 
     <sql id="Base_Column_List">
+
         id,owner,name,
         start_date,end_date,cost,
         description,create_time,create_by,
         edit_time,edit_by
+
     </sql>
     <insert id="insert">
+
         insert into tbl_activity
         VALUES (#{id},#{owner},#{name},#{startDate},#{endDate},#{cost},#{description},
         #{createTime},#{createBy},#{editTime},#{editBy})
+
     </insert>
     <!--  查询所有市场活动  -->
     <select id="selectAll" resultMap="BaseResultMap">
-        select <include refid="Base_Column_List"/>
+
+        select
+        <include refid="Base_Column_List"/>
+
         from tbl_activity
+
     </select>
 
     <!-- 根据id删除指定市场活动   -->
     <delete id="deleteById">
+
     delete from tbl_activity
     where id in
-    <foreach collection="ids" open="(" item="id" separator="," close=")">
-    #{id}
-    </foreach>
+
+        <foreach collection="ids" open="(" item="id" separator="," close=")">
+            #{id}
+        </foreach>
     </delete>
     <!--  根据id查询  -->
     <select id="selectById" resultMap="BaseResultMap">
-    select <include refid="Base_Column_List"/>
+
+    select
+        <include refid="Base_Column_List"/>
+
     from tbl_activity
     where id = #{id}
+
     </select>
     <update id="update">
+
     update tbl_activity
     set owner = #{owner},name = #{name},start_date = #{startDate},end_date = #{endDate},
     cost = #{cost},description = #{description},edit_time = #{editTime},edit_by = #{editBy}
     where id = #{id}
+
     </update>
 
     <!-- 多条件查询   -->
     <select id="selectConditions" resultMap="BaseResultMap">
+
     select a.* from tbl_activity a inner join tbl_user u on a.owner = u.id
-    <where>
-    <if test="name != null and name != ''">
-     and a.name like concat("%",#{name},"%")
-    </if>
-    <if test="owner != null  and owner!= ''">
+
+        <where>
+            <if test="name != null and name != ''">
+                and a.name like concat("%",#{name},"%")
+
+            </if>
+            <if test="owner != null  and owner != ''">
+
     and  u.name like concat("%",#{owner},"%")
-    </if>
-    <if test="startDate != null and startDate != ''">
+
+            </if>
+            <if test="startDate != null and startDate != ''">
+
     and a.start_date &gt;= #{startDate}
-    </if>
-    <if test="endDate != null and endDate != ''">
+
+            </if>
+            <if test="endDate != null and endDate != ''">
+
     and a.end_date &lt;= #{endDate}
-    </if>
-    </where>
+            </if>
+        </where>
     </select>
 </mapper>

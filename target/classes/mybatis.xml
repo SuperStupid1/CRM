@@ -8,6 +8,9 @@
     <typeAliases>
         <package name="com.powernode.pojo"/>
     </typeAliases>
+    <plugins>
+        <plugin interceptor="com.github.pagehelper.PageInterceptor"/>
+    </plugins>
     <mappers>
         <mapper resource="mapper/UserMapper.xml"/>
         <mapper resource="mapper/ActivityMapper.xml"/>

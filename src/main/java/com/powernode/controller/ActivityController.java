@@ -1,5 +1,6 @@
 package com.powernode.controller;
 
+import com.github.pagehelper.PageInfo;
 import com.powernode.commns.Constant;
 import com.powernode.commns.ResponseObject;
 import com.powernode.pojo.Activity;
@@ -26,12 +27,13 @@ public class ActivityController {
      *
      * @return
      */
-    @GetMapping
-    private ResponseObject findAll() {
+    @GetMapping("/{pageNum}/{pageSize}")
+    private ResponseObject findAll(@PathVariable Integer pageNum,@PathVariable Integer pageSize) {
         ResponseObject ro = new ResponseObject();
         ro.setStateCode(200);
-        List<Activity> activities = activityService.findAll();
-        ro.setData(activities);
+        PageInfo<Activity> pageInfo = activityService.findAll(pageNum,pageSize);
+        ro.setData(pageInfo);
+        System.out.println(pageInfo);
         return ro;
     }
 
@@ -109,12 +111,12 @@ public class ActivityController {
      * @param activity
      * @return
      */
-    @GetMapping("/conditionsFind")
-    private ResponseObject conditionsFind(Activity activity) {
+    @GetMapping("/conditionsFind/{pageNum}/{pageSize}")
+    private ResponseObject conditionsFind(Activity activity,@PathVariable Integer pageNum,@PathVariable Integer pageSize) {
         ResponseObject ro = new ResponseObject();
-        List<Activity> activityList = activityService.conditionsFind(activity);
+        PageInfo<Activity> pageInfo = activityService.conditionsFind(activity,pageNum,pageSize);
         ro.setStateCode(200);
-        ro.setData(activityList);
+        ro.setData(pageInfo);
         return ro;
     }
 }

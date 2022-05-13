@@ -9,6 +9,15 @@ import lombok.Data;
  */
 @Data
 public class Activity implements Serializable {
+
+    /**
+     * 修改者用户
+     */
+    private User editUser;
+    /**
+     * 创建者用户
+     */
+    private User createUser;
     /**
      * 所有者用户
      */
