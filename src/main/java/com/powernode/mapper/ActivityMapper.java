@@ -49,6 +49,11 @@ public interface ActivityMapper {
      */
     List<Activity> selectConditions(Activity activity);
 
+    /**
+     * 批量插入
+     */
+    int insertBatch(List<Activity> activityList);
+
 }
 
 

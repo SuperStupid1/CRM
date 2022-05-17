@@ -8,10 +8,15 @@ import java.util.List;
 public interface ActivityService {
 
     /**
-     * 查询所有市场活动
+     * 查询所有市场活动(分页）
      * @return
      */
     PageInfo<Activity> findAll(Integer pageNum,Integer pageSize);
+
+    /**
+     * 查询所有市场活动(不分页）
+     */
+    List<Activity> findAll();
 
     /**
      * 添加市场活动
@@ -40,6 +45,16 @@ public interface ActivityService {
 
     /**
      * 多条件查询市场活动
+     * @param activity
+     * @param pageNum
+     * @param pageSize
+     * @return
      */
     PageInfo<Activity> conditionsFind(Activity activity,Integer pageNum,Integer pageSize);
+
+    /**
+     * 批量插入
+     * @param activityList
+     */
+    void addBatch(List<Activity> activityList);
 }

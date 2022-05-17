@@ -272,6 +272,32 @@
 					alert("请至少选择一个市场活动");
 				}
 		});
+
+		// 为导出绑定点击事件
+		$("#exportActivityAllBtn").click(function () {
+			location.href = "/CRM/activity/exportAll";
+		});
+
+		// 为导入绑定点击事件
+		$("#importActivityBtn").click(function () {
+			let formData = new FormData();
+			formData.append("file",$("#activityFile")[0].files[0]);
+			$.ajax({
+				url:"/CRM/activity/importActivities",
+				type:"post",
+				data:formData,
+				contentType:false,
+				processData:false,
+				dataType:"json",
+				success(ro){
+					if (ro.stateCode == 200){
+						location.reload();
+					}else {
+						alert(ro.msg)
+					}
+				}
+			});
+		})
 	});
 
 	// 反选操作

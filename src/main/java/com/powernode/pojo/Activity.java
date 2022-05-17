@@ -1,6 +1,8 @@
 package com.powernode.pojo;
 
 import java.io.Serializable;
+import java.util.List;
+
 import lombok.Data;
 
 /**
@@ -9,6 +11,11 @@ import lombok.Data;
  */
 @Data
 public class Activity implements Serializable {
+
+    /**
+     * 该市场活动的所有评论备注
+     */
+    private List<ActivityRemark> activityRemarkList;
 
     /**
      * 修改者用户

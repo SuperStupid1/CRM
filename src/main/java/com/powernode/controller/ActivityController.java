@@ -7,10 +7,15 @@ import com.powernode.pojo.Activity;
 import com.powernode.pojo.User;
 import com.powernode.service.ActivityService;
 import com.powernode.util.DateUtil;
+import com.powernode.util.SheetUtil;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -107,7 +112,7 @@ public class ActivityController {
     }
 
     /**
-     * 多条件查询
+     * 多条件分页查询
      * @param activity
      * @return
      */
@@ -119,4 +124,35 @@ public class ActivityController {
         ro.setData(pageInfo);
         return ro;
     }
+
+    /**
+     * 导出全部市场信息为excel表格
+     */
+    @GetMapping("/exportAll")
+    private void exportAll(HttpServletResponse resp) throws IllegalAccessException, IOException {
+        List<Activity> activityList = activityService.findAll();
+        // 调用转换为表格方法
+        HSSFWorkbook workbook = SheetUtil.list2Sheet(activityList);
+        // 设置响应头
+        resp.setContentType("application/octet-stream");
+        resp.setHeader("Content-disposition","attachment;filename=allActivity.xls");
+        workbook.write(resp.getOutputStream());
+    }
+
+    /**
+     * 导入市场信息
+     * @param file
+     * @param session
+     * @throws IOException
+     */
+    @PostMapping("/importActivities")
+    private ResponseObject importActivities(MultipartFile file,HttpSession session) throws IOException {
+        ResponseObject ro = new ResponseObject();
+        List<Activity> activityList = SheetUtil.sheet2List(file.getInputStream(),session);
+        activityService.addBatch(activityList);
+        ro.setStateCode(200);
+        return ro;
+    }
+
+
 }

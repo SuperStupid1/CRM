@@ -24,6 +24,9 @@
         <!--   连接查询对应的修改者用户信息     -->
         <association property="editUser" javaType="user"
                      select="com.powernode.mapper.UserMapper.selectById" column="edit_by"/>
+        <!--         查询该市场活动对应的所有备注            -->
+        <!--<collection property="activityRemarkList" ofType="ActivityRemark"
+                    select="com.powernode.mapper.ActivityRemarkMapper.selectByActivityId" column="id"/>-->
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -106,4 +109,15 @@
             </if>
         </where>
     </select>
+
+    <!--  批量插入  -->
+    <insert id="insertBatch">
+        insert into tbl_activity
+        VALUES
+        <foreach collection="list" item="activity" separator=",">
+        (#{activity.id},#{activity.owner},#{activity.name},#{activity.startDate},#{activity.endDate},
+        #{activity.cost},#{activity.description},#{activity.createTime},#{activity.createBy},
+        #{activity.editTime},#{activity.editBy})
+        </foreach>
+    </insert>
 </mapper>

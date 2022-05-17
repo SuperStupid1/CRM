@@ -32,6 +32,15 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     /**
+     * 查询所有市场活动(不分页)
+     * @return
+     */
+    @Override
+    public List<Activity> findAll(){
+        return activityMapper.selectAll();
+    }
+
+    /**
      * 添加市场活动
      * @param activity
      * @return
@@ -77,5 +86,13 @@ public class ActivityServiceImpl implements ActivityService {
         Page<Activity> page = PageHelper.startPage(pageNum, pageSize);
         List<Activity> activityList = activityMapper.selectConditions(activity);
         return page.toPageInfo();
+    }
+
+    @Override
+    public void addBatch(List<Activity> activityList) {
+        int rows = activityMapper.insertBatch(activityList);
+        if (rows < activityList.size()){
+            throw new CRMException("导入失败");
+        }
     }
 }
