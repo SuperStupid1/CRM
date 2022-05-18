@@ -5,10 +5,12 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.powernode.exception.CRMException;
 import com.powernode.mapper.ActivityMapper;
+import com.powernode.mapper.ActivityRemarkMapper;
 import com.powernode.pojo.Activity;
 import com.powernode.service.ActivityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
@@ -18,6 +20,8 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Autowired
     private ActivityMapper activityMapper;
+    @Autowired
+    private ActivityRemarkMapper activityRemarkMapper;
 
     /**
      * 查询所有市场活动
@@ -53,13 +57,19 @@ public class ActivityServiceImpl implements ActivityService {
         }
     }
 
+    /**
+     * 根据市场活动id删除市场活动，并先删除其所有备注信息
+     * @param ids
+     */
     @Override
+    @Transactional(rollbackFor = Exception.class)// 添加事务管理注解（如果在删除备注信息的过程中发生异常，那么需要进行回滚）
     public void delActivity(String ids) {
-        List<String> idList = Arrays.asList(ids.split(","));
-        int rows = activityMapper.deleteById(idList);
-        if (rows != idList.size()){
-            throw new CRMException("删除失败");
+        String[] idList = ids.split(",");
+        for (String id : idList){
+            activityRemarkMapper.deleteByActivityId(id);
+            activityMapper.deleteById(id);
         }
+
     }
 
     @Override

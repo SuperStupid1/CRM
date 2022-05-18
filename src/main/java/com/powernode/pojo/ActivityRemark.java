@@ -7,6 +7,12 @@ import lombok.Data;
  */
 @Data
 public class ActivityRemark {
+
+    /**
+     * 创建者User对象
+     */
+    private User createUser;
+
     private String id;
 
     private String noteContent;

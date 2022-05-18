@@ -39,30 +39,46 @@
 					$("#editTime").html("&nbsp;&nbsp;"+ro.data.editTime);
 				}
 				$("#description").html(ro.data.description);
-				if (ro.data.activityRemarkList != undefined){
+				if (ro.data.activityRemarkList != null && ro.data.activityRemarkList != undefined){
 					let htmlStr = "";
 					for (let i = 0; i < ro.data.activityRemarkList.length; i++) {
 						htmlStr += "<div class=\"remarkDiv\" style=\"height: 60px;\">\n" +
 								"\t\t\t\t<img title=\"zhangsan\" src=\"../../image/user-thumbnail.png\" style=\"width: 30px; height:30px;\">\n" +
 								"\t\t\t\t<div style=\"position: relative; top: -40px; left: 40px;\" >\n" +
-								"\t\t\t\t\t<h5>哎呦！</h5>\n" +
-								"\t\t\t\t\t<font color=\"gray\">市场活动</font> <font color=\"gray\">-</font> <b>发传单</b> <small style=\"color: gray;\"> 2017-01-22 10:10:10 由zhangsan</small>\n" +
+								"\t\t\t\t\t<h5>"+ro.data.activityRemarkList[i].noteContent+"</h5>\n" +
+								"\t\t\t\t\t<font color=\"gray\">市场活动</font> <font color=\"gray\">-</font> <b>"+ro.data.name+"</b> <small style=\"color: gray;\"> "+ro.data.activityRemarkList[i].createTime+" 由"+ro.data.activityRemarkList[i].createUser.name+"</small>\n" +
 								"\t\t\t\t\t<div style=\"position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;\">\n" +
-								"\t\t\t\t\t\t<a class=\"myHref\" href=\"javascript:void(0);\"><span class=\"glyphicon glyphicon-edit\" style=\"font-size: 20px; color: #E6E6E6;\"></span></a>\n" +
+								"\t\t\t\t\t\t<a class='myHref' href='javascript:void(0);'><span class='glyphicon glyphicon-edit' style='font-size: 20px; color: #E6E6E6;'></span></a>\n" +
 								"\t\t\t\t\t\t&nbsp;&nbsp;&nbsp;&nbsp;\n" +
-								"\t\t\t\t\t\t<a class=\"myHref\" href=\"javascript:void(0);\"><span class=\"glyphicon glyphicon-remove\" style=\"font-size: 20px; color: #E6E6E6;\"></span></a>\n" +
+								"\t\t\t\t\t\t<a class='myHref' href='javascript:void(0);'><span class='glyphicon glyphicon-remove' style='font-size: 20px; color: #E6E6E6;'></span></a>\n" +
 								"\t\t\t\t\t</div>\n" +
 								"\t\t\t\t</div>\n" +
 								"\t\t\t</div>";
 					}
-					$("activityRemark").html(htmlStr);
+					$("#activityRemark").html(htmlStr);
 				}else {
-					$("activityRemark").html("");
+					$("#activityRemark").html("");
 				}
 
 			}
 			}
 		});
+
+		$("#saveBtn").click(function () {
+			$.ajax({
+				url:"/CRM/activityRemark",
+				type:"post",
+				data:{noteContent:$("#remark").val(),activityId:id,editFlag:0},
+				dataType: "json",
+				success(ro){
+					if (ro.stateCode == 200){
+						location.reload();
+					}else {
+						alert(ro.msg)
+					}
+				}
+			});
+		})
 
 		$("#remark").focus(function(){
 			if(cancelAndSaveBtnDefault){
@@ -240,7 +256,7 @@
 				<textarea id="remark" class="form-control" style="width: 850px; resize : none;" rows="2"  placeholder="添加备注..."></textarea>
 				<p id="cancelAndSaveBtn" style="position: relative;left: 737px; top: 10px; display: none;">
 					<button id="cancelBtn" type="button" class="btn btn-default">取消</button>
-					<button type="button" class="btn btn-primary">保存</button>
+					<button id="saveBtn" type="button" class="btn btn-primary">保存</button>
 				</p>
 			</form>
 		</div>

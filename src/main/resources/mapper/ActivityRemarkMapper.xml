@@ -11,6 +11,8 @@
     <result column="edit_by" jdbcType="VARCHAR" property="editBy" />
     <result column="edit_flag" jdbcType="CHAR" property="editFlag" />
     <result column="activity_id" jdbcType="CHAR" property="activityId" />
+    <association property="createUser" javaType="com.powernode.pojo.User"
+    select="com.powernode.mapper.UserMapper.selectById" column="create_by"/>
   </resultMap>
   <sql id="Base_Column_List">
     id, note_content, create_time, create_by, edit_time, edit_by, edit_flag, activity_id
@@ -90,7 +92,7 @@
   <select id="selectByActivityId" resultMap="BaseResultMap">
    <!-- 根据市场活动id查询该市场活动的所有备注信息  -->
   select <include refid="Base_Column_List"/>
-  from tbl_activity_remark where activity_id = #{activityId}
+  from tbl_activity_remark where activity_id = #{id}
   </select>
 
 </mapper>

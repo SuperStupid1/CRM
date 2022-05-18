@@ -26,7 +26,7 @@ public interface ActivityMapper {
      * @param idList
      * @return
      */
-    int deleteById(@Param("ids") List<String> idList);
+    int deleteByIds(@Param("ids") List<String> idList);
 
     /**
      * 根据id查询
@@ -53,6 +53,13 @@ public interface ActivityMapper {
      * 批量插入
      */
     int insertBatch(List<Activity> activityList);
+
+    /**
+     * 按照id单个删除
+     * @param id
+     * @return
+     */
+    int deleteById(String id);
 
 }
 

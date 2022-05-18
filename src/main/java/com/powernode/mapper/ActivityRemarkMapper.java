@@ -23,5 +23,10 @@ public interface ActivityRemarkMapper {
 
     int updateByPrimaryKey(ActivityRemark record);
 
-    List<ActivityRemark> selectByActivityId(String activityId);
+    /**
+     * 根据市场活动id查询备注信息
+     * @param id
+     * @return
+     */
+    List<ActivityRemark> selectByActivityId(String id);
 }

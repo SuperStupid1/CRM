@@ -14,5 +14,6 @@
     <mappers>
         <mapper resource="mapper/UserMapper.xml"/>
         <mapper resource="mapper/ActivityMapper.xml"/>
+        <mapper resource="mapper/ActivityRemarkMapper.xml"/>
     </mappers>
 </configuration>

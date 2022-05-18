@@ -25,24 +25,17 @@
         <association property="editUser" javaType="user"
                      select="com.powernode.mapper.UserMapper.selectById" column="edit_by"/>
         <!--         查询该市场活动对应的所有备注            -->
-        <!--<collection property="activityRemarkList" ofType="ActivityRemark"
-                    select="com.powernode.mapper.ActivityRemarkMapper.selectByActivityId" column="id"/>-->
+        <collection property="activityRemarkList" ofType="activityRemark"
+                    select="com.powernode.mapper.ActivityRemarkMapper.selectByActivityId" column="id"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-
-        id,owner,name,
-        start_date,end_date,cost,
-        description,create_time,create_by,
-        edit_time,edit_by
-
+        id,owner,name,start_date,end_date,cost,description,create_time,create_by,edit_time,edit_by
     </sql>
     <insert id="insert">
-
         insert into tbl_activity
         VALUES (#{id},#{owner},#{name},#{startDate},#{endDate},#{cost},#{description},
         #{createTime},#{createBy},#{editTime},#{editBy})
-
     </insert>
     <!--  查询所有市场活动  -->
     <select id="selectAll" resultMap="BaseResultMap">
